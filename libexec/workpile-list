@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Usage: workpile list
+# Summary: List the task pile
+# Help: This will print a formatted pile of tasks.
+
+set -e
+
+echo list
