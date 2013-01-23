@@ -1,4 +1,32 @@
 #!/usr/bin/env bash
-set -e
+# Usage: workpile push [<taskname>]
+# Summary: Push a task on the pile
+# Help: This will push a tasks on the pile.
 
-echo list
+# IMPORTS
+########################################
+
+. "$_WORKPILE_ROOT/lib/workpile.ini"
+
+. "$_WORKPILE_ROOT/lib/workpile.cst"
+. "$_WORKPILE_ROOT/lib/workpile.fun"
+
+# SCRIPT
+########################################
+
+taskname="$*"
+
+# Creating task
+task="$( wp_add_task "$taskname" "$( wp_get_firsttask )" )"
+
+# Setting as first task
+wp_set_firsttask "$task"
+
+# Task is now on foreground
+wp_addinfo_taskfg "$task"
+
+# User infos
+echo "Pushing '$taskname'"
+
+# Exit
+wp_exit "$WP_RV_OK"

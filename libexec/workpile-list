@@ -3,6 +3,24 @@
 # Summary: List the task pile
 # Help: This will print a formatted pile of tasks.
 
-set -e
+# IMPORTS
+########################################
 
-echo list
+. "$_WORKPILE_ROOT/lib/workpile.ini"
+
+. "$_WORKPILE_ROOT/lib/workpile.cst"
+. "$_WORKPILE_ROOT/lib/workpile.fun"
+
+# SCRIPT
+########################################
+
+task="$( wp_get_lasttask )"
+
+while [ -n "$task" ]; do
+	echo "$( wp_get_taskname "$task" )"
+
+	task="$( wp_get_taskprev "$task" )"
+done
+
+# Exit
+wp_exit "$WP_RV_OK"
