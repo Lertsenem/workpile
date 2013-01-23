@@ -1,0 +1,51 @@
+#!/bin/bash
+########################################
+# Project :	Workpile
+#
+# Description :	
+# Useful constants for workpile
+#
+# Author :	Lertsenem	<lertsenem@yahoo.fr>
+########################################
+
+[ -z "$WP_TAG_WORKPILE_CST" ] || return
+WP_TAG_WORKPILE_CST=1
+
+# IMPORTS
+########################################
+
+# CONSTANTS
+########################################
+# --------------------------------------
+WP_NAME="workpile"
+
+# --------------------------------------
+WP_CMD_HASH="sha1sum | cut -d ' ' -f 1"
+WP_CMD_DATE="date +%s"
+
+# --------------------------------------
+WP_LOC_SAVROOT="$HOME/.$WP_NAME"
+WP_LOC_SAVTASKS="$WP_LOC_SAVROOT/tasks"
+
+# --------------------------------------
+WP_TAG_FIRSTTASK="^"
+WP_TAG_LASTTASK="$"
+
+WP_TAG_TASKINFOS="task"
+
+WP_TAG_TASKFG=">"
+WP_TAG_TASKBG="<"
+
+# --------------------------------------
+WP_NUM_TASKNAME="1"
+WP_NUM_TASKNEXT="2"
+WP_NUM_TASKPREV="3"
+WP_NUM_TASKCREA="4"
+
+WP_NUM_MAX="4"
+
+# --------------------------------------
+WP_RV_OK=0
+WP_RV_EMPTYTASK=1
+WP_RV_NOSUCHTASK=2
+WP_RV_NOTASKINFOS=3
