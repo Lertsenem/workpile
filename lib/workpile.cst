@@ -27,8 +27,8 @@ WP_LOC_SAVROOT="$HOME/.$WP_NAME"
 WP_LOC_SAVTASKS="$WP_LOC_SAVROOT/tasks"
 
 # --------------------------------------
-WP_TAG_FIRSTTASK="^"
-WP_TAG_LASTTASK="$"
+WP_TAG_FIRSTTASK="firsttask"
+WP_TAG_LASTTASK="lasttask"
 
 WP_TAG_TASKINFOS="task"
 

@@ -95,7 +95,7 @@ wp_hash()
 wp_get_firsttask()
 {
 	# Local Variables
-	local lv_firsttask="$(basename "$(ls -d $WP_LOC_SAVTASKS/*$WP_TAG_FIRSTTASK* 2> "/dev/null")")"
+	local lv_firsttask="$( basename "$( readlink "$WP_LOC_SAVTASKS/$WP_TAG_FIRSTTASK" 2> "/dev/null" )" )"
 	
 	[ -z "$lv_firsttask" ] && return "$WP_RV_NOSUCHTASK"
 
@@ -115,11 +115,11 @@ wp_get_firsttask()
 wp_get_lasttask()
 {
 	# Local Variables
-	local lv_lasttask="$(ls -d $WP_LOC_SAVTASKS/*$WP_TAG_LASTTASK* 2> "/dev/null")"
+	local lv_lasttask="$( basename "$( readlink "$WP_LOC_SAVTASKS/$WP_TAG_LASTTASK" 2> "/dev/null" )" )"
 	
 	[ -z "$lv_lasttask" ] && return "$WP_RV_NOSUCHTASK"
 
-	echo "$( wp_taslk "$lv_lasttask" )"
+	echo "$lv_lasttask"
 
 	return "$WP_RV_OK"
 	
@@ -143,7 +143,7 @@ wp_get_taskname()
 	
 	[ -z "$arg_task" ] && return "$WP_RV_EMPTYTASK"
 
-	lv_taskinfos="$(ls "$WP_LOC_SAVTASKS/"*$arg_task*"/$WP_TAG_TASKINFOS" 2> "/dev/null")"
+	lv_taskinfos="$(ls "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS" 2> "/dev/null")"
 
 	[ -z "$lv_taskinfos" ] && return "$WP_RV_NOTASKINFOS"
 
@@ -170,7 +170,7 @@ wp_get_tasknext()
 	
 	[ -z "$arg_task" ] && return "$WP_RV_EMPTYTASK"
 
-	lv_taskinfos="$(ls "$WP_LOC_SAVTASKS/"*$arg_task*"/$WP_TAG_TASKINFOS" 2> "/dev/null")"
+	lv_taskinfos="$(ls "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS" 2> "/dev/null")"
 
 	[ -z "$lv_taskinfos" ] && return "$WP_RV_NOTASKINFOS"
 
@@ -197,7 +197,7 @@ wp_get_taskprev()
 	
 	[ -z "$arg_task" ] && return "$WP_RV_EMPTYTASK"
 
-	lv_taskinfos="$(ls "$WP_LOC_SAVTASKS/"*$arg_task*"/$WP_TAG_TASKINFOS" 2> "/dev/null")"
+	lv_taskinfos="$(ls "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS" 2> "/dev/null")"
 
 	[ -z "$lv_taskinfos" ] && return "$WP_RV_NOTASKINFOS"
 
@@ -225,12 +225,6 @@ wp_add_task()
 	local lv_task=""
 	local lv_date="$( $WP_CMD_DATE )"
 
-	local lv_tasknext="${arg_tasknext/$WP_TAG_FIRSTTASK/}"
-	local lv_tasknext="${lv_tasknext/$WP_TAG_LASTTASK/}"
-
-	local lv_taskprev="${arg_taskprev/$WP_TAG_FIRSTTASK/}"
-	local lv_taskprev="${lv_taskprev/$WP_TAG_LASTTASK/}"
-
 	# Checks Arguments
 	[ -z "$arg_taskname" ] && return "$WP_RV_EMPTYTASK"
 
@@ -247,8 +241,8 @@ wp_add_task()
 
 	# Insert infos in taskinfos file
 	sed -i "${WP_NUM_TASKNAME}c\\${arg_taskname}" "$WP_LOC_SAVTASKS/$lv_task/$WP_TAG_TASKINFOS"
-	sed -i "${WP_NUM_TASKNEXT}c\\${lv_tasknext}" "$WP_LOC_SAVTASKS/$lv_task/$WP_TAG_TASKINFOS"
-	sed -i "${WP_NUM_TASKPREV}c\\${lv_taskprev}" "$WP_LOC_SAVTASKS/$lv_task/$WP_TAG_TASKINFOS"
+	sed -i "${WP_NUM_TASKNEXT}c\\${arg_tasknext}" "$WP_LOC_SAVTASKS/$lv_task/$WP_TAG_TASKINFOS"
+	sed -i "${WP_NUM_TASKPREV}c\\${arg_taskprev}" "$WP_LOC_SAVTASKS/$lv_task/$WP_TAG_TASKINFOS"
 	sed -i "${WP_NUM_TASKCREA}c\\${lv_date}" "$WP_LOC_SAVTASKS/$lv_task/$WP_TAG_TASKINFOS"
 
 	# Echo task id
@@ -278,7 +272,7 @@ wp_addinfo_taskfg()
 	[ -z "$arg_task" ] && return "$WP_RV_EMPTYTASK"
 
 	# Add info
-	echo "${WP_TAG_TASKFG}$($WP_CMD_DATE)" >> "$WP_LOC_SAVTASKS/"*$arg_task*"/$WP_TAG_TASKINFOS"
+	echo "${WP_TAG_TASKFG}$($WP_CMD_DATE)" >> "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS"
 
 	# Ok
 	return "$WP_RV_OK"
@@ -304,7 +298,7 @@ wp_addinfo_taskbg()
 	[ -z "$arg_task" ] && return "$WP_RV_EMPTYTASK"
 
 	# Add info
-	echo "${WP_TAG_TASKBG}$($WP_CMD_DATE)" >> "$WP_LOC_SAVTASKS/"*$arg_task*"/$WP_TAG_TASKINFOS"
+	echo "${WP_TAG_TASKBG}$($WP_CMD_DATE)" >> "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS"
 
 	# Ok
 	return "$WP_RV_OK"
@@ -329,20 +323,21 @@ wp_set_firsttask()
 	# Checks Arguments
 	[ -z "$arg_task" ] && return "$WP_RV_EMPTYTASK"
 
-	echo "$arg_task" | grep -Fq "$WP_TAG_FIRSTTASK"
-	[ "$?" -eq 0 ] && return "$WP_RVNOTHINGTODO"
-
 	# Get old firt task
 	lv_oldfirsttask="$( wp_get_firsttask )"
+
+	[ "$arg_task" == "$lv_oldfirsttask" ] && return "$WP_RVNOTHINGTODO"
 
 	# Change old first task 'prev' field
 	[ -n "$lv_oldfirsttask" ] && sed -i "${WP_NUM_TASKPREV}c\\${arg_task}" "$WP_LOC_SAVTASKS/$lv_oldfirsttask/$WP_TAG_TASKINFOS"
 
 	# Move firstness
-	[ -n "$lv_oldfirsttask" ] && mv "$WP_LOC_SAVTASKS/$lv_oldfirsttask" "$WP_LOC_SAVTASKS/${lv_oldfirsttask/$WP_TAG_FIRSTTASK/}"
-	mv "$WP_LOC_SAVTASKS/$arg_task" "$WP_LOC_SAVTASKS/${WP_TAG_FIRSTTASK}${arg_task}"
+	rm "$WP_LOC_SAVTASKS/$WP_TAG_FIRSTTASK" 2> "/dev/null"
+	ln -s "$arg_task" "$WP_LOC_SAVTASKS/$WP_TAG_FIRSTTASK"
 
-	echo "${WP_TAG_FIRSTTASK}${arg_task}"
+	# Actualize infos
+	wp_addinfo_taskbg "$lv_oldfirsttask"
+	wp_addinfo_taskfg "$arg_task"
 
 	return "$WP_RV_OK"
 
@@ -367,20 +362,17 @@ wp_set_lasttask()
 	# Checks Arguments
 	[ -z "$arg_task" ] && return "$WP_RV_EMPTYTASK"
 
-	echo "$arg_task" | grep -Fq "$WP_TAG_LASTTASK"
-	[ "$?" -eq 0 ] && return "$WP_RVNOTHINGTODO"
-
 	# Get old last task
 	lv_oldlasttask="$( wp_get_lasttask )"
+
+	[ "$arg_task" == "$lv_oldlasttask" ] && return "$WP_RVNOTHINGTODO"
 
 	# Change old last tag 'next' field
 	[ -n "$lv_oldlasttask" ] && sed -i "${WP_NUM_TASKNEXT}c\\${arg_task}" "$WP_LOC_SAVTASKS/$lv_oldlasttask/$WP_TAG_TASKINFOS"
 
 	# Move lastness
-	[ -n "$lv_oldlasttask" ] && mv "$WP_LOC_SAVTASKS/$lv_oldlasttask" "$WP_LOC_SAVTASKS/${lv_oldlasttask/$WP_TAG_LASTTASK/}"
-	mv "$WP_LOC_SAVTASKS/$arg_task" "$WP_LOC_SAVTASKS/${WP_TAG_LASTTASK}${arg_task}"
-
-	echo "${WP_TAG_LASTTASK}${arg_task}"
+	rm "$WP_LOC_SAVTASKS/$WP_TAG_LASTTASK" 2> "/dev/null"
+	ln -s "$arg_task" "$WP_LOC_SAVTASKS/$WP_TAG_LASTTASK"
 
 	return "$WP_RV_OK"
 

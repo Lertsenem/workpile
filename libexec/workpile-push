@@ -20,13 +20,10 @@ taskname="$*"
 task="$( wp_add_task "$taskname" "$( wp_get_firsttask )" )"
 
 # Setting last task if needed
-[ -z "$( wp_get_lasttask )" ] && task="$( wp_set_lasttask "$task" )"
+[ -z "$( wp_get_lasttask )" ] && wp_set_lasttask "$task"
 
 # Setting as first task
-task="$( wp_set_firsttask "$task" )"
-
-# Task is now on foreground
-wp_addinfo_taskfg "$task"
+wp_set_firsttask "$task"
 
 # User infos
 echo "Pushing '$taskname'"
