@@ -331,6 +331,9 @@ wp_set_firsttask()
 	# Change old first task 'prev' field
 	[ -n "$lv_oldfirsttask" ] && sed -i "${WP_NUM_TASKPREV}c\\${arg_task}" "$WP_LOC_SAVTASKS/$lv_oldfirsttask/$WP_TAG_TASKINFOS"
 
+	# Change new first task 'prev' field (to void)
+	sed -i ${WP_NUM_TASKPREV}c\\\\ "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS"
+
 	# Move firstness
 	rm "$WP_LOC_SAVTASKS/$WP_TAG_FIRSTTASK" 2> "/dev/null"
 	ln -s "$arg_task" "$WP_LOC_SAVTASKS/$WP_TAG_FIRSTTASK"
@@ -370,6 +373,9 @@ wp_set_lasttask()
 	# Change old last tag 'next' field
 	[ -n "$lv_oldlasttask" ] && sed -i "${WP_NUM_TASKNEXT}c\\${arg_task}" "$WP_LOC_SAVTASKS/$lv_oldlasttask/$WP_TAG_TASKINFOS"
 
+	# Change new last task 'next' field (to void)
+	sed -i ${WP_NUM_TASKNEXT}c\\\\ "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS"
+
 	# Move lastness
 	rm "$WP_LOC_SAVTASKS/$WP_TAG_LASTTASK" 2> "/dev/null"
 	ln -s "$arg_task" "$WP_LOC_SAVTASKS/$WP_TAG_LASTTASK"
@@ -377,3 +383,19 @@ wp_set_lasttask()
 	return "$WP_RV_OK"
 
 } # wp_set_lasttask()
+
+#
+# Description :	
+#
+# Arguments :	$1/
+#
+# Returns :	
+# ======================================
+wp_clean_list()
+{
+	rm "$WP_LOC_SAVTASKS/$WP_TAG_FIRSTTASK" 2> "/dev/null"
+	rm "$WP_LOC_SAVTASKS/$WP_TAG_LASTTASK" 2> "/dev/null"
+
+	return "$WP_RV_OK"
+
+} # wp_clean_list()

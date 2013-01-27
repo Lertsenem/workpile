@@ -1,4 +1,36 @@
 #!/usr/bin/env bash
-set -e
+# Usage: workpile pop
+# Summary: Pop a task from the pile
+# Help: This will pop a tasks from the pile and consider it done.
 
-echo list
+# IMPORTS
+########################################
+
+. "$_WORKPILE_ROOT/lib/workpile.ini"
+
+. "$_WORKPILE_ROOT/lib/workpile.cst"
+. "$_WORKPILE_ROOT/lib/workpile.fun"
+
+# SCRIPT
+########################################
+
+task="$( wp_get_firsttask )"
+taskname="$( wp_get_taskname "$task" )"
+
+[ -z "$task" ] && wp_exit "$WP_RV_OK"
+
+# Check if theres 0, 1 or more tasks
+if [ "$task" = "$( wp_get_lasttask )" ]; then
+	wp_clean_list
+	echo "Popping '$taskname' ! No more task on workpile ! Good job !"
+	wp_exit "$WP_RV_OK"
+fi
+
+# Poping task
+wp_set_firsttask "$( wp_get_tasknext "$task" )"
+
+# User infos
+echo "Popping '$taskname' ! next task is '$( wp_get_taskname "$( wp_get_firsttask )" )'"
+
+# Exit
+wp_exit "$WP_RV_OK"
