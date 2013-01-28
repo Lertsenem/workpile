@@ -260,6 +260,48 @@ wp_add_task()
 #
 # Returns :	
 # ======================================
+wp_move_task()
+{
+	# Arguments
+	local arg_task="$1"
+	local arg_position="$2"
+
+	# Local Variables
+	local lv_task="$arg_task"
+	local lv_tasknext="$( wp_get_tasknext "$arg_task" )"
+
+	# Finding previous task
+	if [ "$arg_position" -gt 0 ]; then
+		for (( i=1; i<="$arg_position"; i++ )); do
+			lv_task="$lv_tasknext"
+			lv_tasknext="$( wp_get_tasknext "$lv_task" )"
+			[ -n "$lv_task" ] || return "$WP_RV_BADARG"
+		done
+	fi
+
+	# Checks
+	[ "lv_task" = "$arg_task" ] && return "$WP_RV_NOTHINGTODO"
+
+	# Setting next and prev fields
+	wp_set_tasknext "$lv_task" "$arg_task"
+	wp_set_taskprev "$lv_tasknext" "$arg_task"
+
+	wp_set_tasknext "$arg_task" "$lv_tasknext"
+	wp_set_taskprev "$arg_task" "$lv_task"
+
+	# Ok
+	return "$WP_RV_OK"
+
+} # wp_move_task()
+
+
+#
+# Description :	
+#
+# Arguments :	$1/
+#
+# Returns :	
+# ======================================
 wp_addinfo_taskfg()
 {
 	# Arguments
@@ -326,7 +368,7 @@ wp_set_firsttask()
 	# Get old firt task
 	lv_oldfirsttask="$( wp_get_firsttask )"
 
-	[ "$arg_task" == "$lv_oldfirsttask" ] && return "$WP_RVNOTHINGTODO"
+	[ "$arg_task" == "$lv_oldfirsttask" ] && return "$WP_RV_NOTHINGTODO"
 
 	# Change old first task 'prev' field
 	[ -n "$lv_oldfirsttask" ] && sed -i "${WP_NUM_TASKPREV}c\\${arg_task}" "$WP_LOC_SAVTASKS/$lv_oldfirsttask/$WP_TAG_TASKINFOS"
@@ -368,7 +410,7 @@ wp_set_lasttask()
 	# Get old last task
 	lv_oldlasttask="$( wp_get_lasttask )"
 
-	[ "$arg_task" == "$lv_oldlasttask" ] && return "$WP_RVNOTHINGTODO"
+	[ "$arg_task" == "$lv_oldlasttask" ] && return "$WP_RV_NOTHINGTODO"
 
 	# Change old last tag 'next' field
 	[ -n "$lv_oldlasttask" ] && sed -i "${WP_NUM_TASKNEXT}c\\${arg_task}" "$WP_LOC_SAVTASKS/$lv_oldlasttask/$WP_TAG_TASKINFOS"
@@ -383,6 +425,54 @@ wp_set_lasttask()
 	return "$WP_RV_OK"
 
 } # wp_set_lasttask()
+
+#
+# Description :	
+#
+# Arguments :	$1/
+#
+# Returns :	
+# ======================================
+wp_set_tasknext()
+{
+	# Arguments
+	local arg_task="$1"
+	local arg_next="$2"
+	
+	# Checks
+	[ -z "$arg_task" ] && return "$WP_RV_EMPTYTASK"
+
+	[ -z "$arg_next" ] && sed -i ${WP_NUM_TASKNEXT}c\\\\ "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS"
+	[ -n "$arg_next" ] && sed -i "${WP_NUM_TASKNEXT}c\\${arg_next}" "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS"
+
+	# Ok
+	return "$WP_RV_OK"
+
+} # wp_set_tasknext()
+
+#
+# Description :	
+#
+# Arguments :	$1/
+#
+# Returns :	
+# ======================================
+wp_set_taskprev()
+{
+	# Arguments
+	local arg_task="$1"
+	local arg_prev="$2"
+	
+	# Checks
+	[ -z "$arg_task" ] && return "$WP_RV_EMPTYTASK"
+
+	[ -z "$arg_prev" ] && sed -i ${WP_NUM_TASKPREV}c\\\\ "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS"
+	[ -n "$arg_prev" ] && sed -i "${WP_NUM_TASKPREV}c\\${arg_prev}" "$WP_LOC_SAVTASKS/$arg_task/$WP_TAG_TASKINFOS"
+
+	# Ok
+	return "$WP_RV_OK"
+
+} # wp_set_taskprev()
 
 #
 # Description :	

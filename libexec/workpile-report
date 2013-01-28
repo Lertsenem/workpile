@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Usage: workpile report [<level>]
+# Summary: Report the current task later on the workpile
+# Help: This will report the current task later on the workpile.
+#
+# <level>	indicates how much to report the current task back [default: 1]
+
+# IMPORTS
+########################################
+
+. "$_WORKPILE_ROOT/lib/workpile.ini"
+
+. "$_WORKPILE_ROOT/lib/workpile.cst"
+. "$_WORKPILE_ROOT/lib/workpile.fun"
+
+# SCRIPT
+########################################
+
+reportlevel="$1"
+
+[ -n "$reportlevel" ] || reportlevel=1
+
+task="$( wp_get_firsttask )"
+tasknext="$( wp_get_tasknext "$task" )"
+
+if [ -z "$tasknext" ]; then
+	echo "No task following '$( wp_get_taskname "$task" )', you can't procrastinate forever."
+	wp_exit "$WP_RV_NOTHINGTODO"
+fi
+
+# Reset first task
+wp_set_firsttask "$tasknext"
+
+wp_move_task "$task" "$reportlevel"
+
+# Reset last task if needed
+[ -z "$( wp_get_tasknext "$task" )" ] && wp_set_lasttask "$task"
+
+# Infos
+wp_addinfo_taskbg "$task"
+wp_addinfo_taskfg "$tasknext"
+
+# UI
+echo "Reporting $( wp_get_taskname "$task" ). Current task is now $( wp_get_taskname "$tasknext" )."
+
+# Exit
+wp_exit "$WP_RV_OK"
