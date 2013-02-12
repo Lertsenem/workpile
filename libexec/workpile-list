@@ -8,6 +8,7 @@
 
 . "$_WORKPILE_ROOT/lib/workpile.ini"
 
+. "$_WORKPILE_ROOT/lib/generic.cst"
 . "$_WORKPILE_ROOT/lib/workpile.cst"
 . "$_WORKPILE_ROOT/lib/workpile.fun"
 
@@ -15,9 +16,14 @@
 ########################################
 
 task="$( wp_get_lasttask )"
+firsttask="$( wp_get_firsttask )"
 
 while [ -n "$task" ]; do
-	echo "$( wp_get_taskname "$task" )"
+	if [ "$task" = "$firsttask" ]; then
+		echo -e "${TAG_BOLD} [ $( wp_get_taskname "$task" ) ] ${TAG_END}"
+	else
+		echo "$( wp_get_taskname "$task" )"
+	fi
 
 	task="$( wp_get_taskprev "$task" )"
 done

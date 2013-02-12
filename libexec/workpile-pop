@@ -8,6 +8,7 @@
 
 . "$_WORKPILE_ROOT/lib/workpile.ini"
 
+. "$_WORKPILE_ROOT/lib/generic.cst"
 . "$_WORKPILE_ROOT/lib/workpile.cst"
 . "$_WORKPILE_ROOT/lib/workpile.fun"
 
@@ -22,7 +23,7 @@ taskname="$( wp_get_taskname "$task" )"
 # Check if theres 0, 1 or more tasks
 if [ "$task" = "$( wp_get_lasttask )" ]; then
 	wp_clean_list
-	echo "Popping '$taskname' ! No more task on workpile ! Good job !"
+	echo -e "Popping '${TAG_B}${TAG_S}$taskname${TAG_E}'\n${TAG_L}No more task on workpile ! Good job !${TAG_E}"
 	wp_exit "$WP_RV_OK"
 fi
 
@@ -30,7 +31,7 @@ fi
 wp_set_firsttask "$( wp_get_tasknext "$task" )"
 
 # User infos
-echo "Popping '$taskname' ! next task is '$( wp_get_taskname "$( wp_get_firsttask )" )'"
+echo -e "Popping '${TAG_B}${TAG_S}$taskname${TAG_E}' ! Next task is '${TAG_B}$( wp_get_taskname "$( wp_get_firsttask )" )${TAG_E}'"
 
 # Exit
 wp_exit "$WP_RV_OK"

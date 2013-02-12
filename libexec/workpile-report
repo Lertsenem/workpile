@@ -10,6 +10,7 @@
 
 . "$_WORKPILE_ROOT/lib/workpile.ini"
 
+. "$_WORKPILE_ROOT/lib/generic.cst"
 . "$_WORKPILE_ROOT/lib/workpile.cst"
 . "$_WORKPILE_ROOT/lib/workpile.fun"
 
@@ -24,7 +25,7 @@ task="$( wp_get_firsttask )"
 tasknext="$( wp_get_tasknext "$task" )"
 
 if [ -z "$tasknext" ]; then
-	echo "No task following '$( wp_get_taskname "$task" )', you can't procrastinate forever."
+	echo -e "No task following '${TAG_B}$( wp_get_taskname "$task" )${TAG_E}'\n${TAG_L}${CLR_FG_RED}You can't procrastinate forever !${TAG_E}"
 	wp_exit "$WP_RV_NOTHINGTODO"
 fi
 
@@ -41,7 +42,7 @@ wp_addinfo_taskbg "$task"
 wp_addinfo_taskfg "$tasknext"
 
 # UI
-echo "Reporting $( wp_get_taskname "$task" ). Current task is now $( wp_get_taskname "$tasknext" )."
+echo -e "Reporting '${TAG_B}$( wp_get_taskname "$task" )${TAG_E}'. Current task is now '${TAG_B}$( wp_get_taskname "$tasknext" )${TAG_E}'."
 
 # Exit
 wp_exit "$WP_RV_OK"

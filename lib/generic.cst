@@ -1,0 +1,62 @@
+#!/bin/bash
+########################################
+# Project :	Workpile
+#
+# Description :	
+# Generic constants, useful for workpile
+#
+# Author :	Lertsenem	<lertsenem@yahoo.fr>
+########################################
+
+[ -z "$WP_TAG_GENERIC_CST" ] || return
+WP_TAG_GENERIC_CST=1
+
+# IMPORTS
+########################################
+
+# CONSTANTS
+########################################
+# Tags
+# ======================================
+TAG_END="\033[00m"
+TAG_E="$TAG_END"
+
+TAG_BOLD="\033[01m"
+TAG_B="$TAG_BOLD"
+
+TAG_LIGHT="\033[02m"
+TAG_L="$TAG_LIGHT"
+
+TAG_UNDERLINED="\033[04m"
+TAG_U="$TAG_UNDERLINED"
+
+TAG_HIGHLIGHTED="\033[07m"
+TAG_H="$TAG_HIGHLIGHTED"
+
+TAG_STROKEN="\033[09m"
+TAG_S="$TAG_STROKEN"
+
+
+
+# Colors
+# ======================================
+CLR_END="$TAG_END"
+CLR_E="$CLR_END"
+
+CLR_FG_BLACK="\033[30m"
+CLR_FG_RED="\033[31m"
+CLR_FG_GREEN="\033[32m"
+CLR_FG_YELLOW="\033[33m"
+CLR_FG_BLUE="\033[34m"
+CLR_FG_PURPLE="\033[35m"
+CLR_FG_CYAN="\033[36m"
+CLR_FG_WHITE="\033[37m"
+
+CLR_BG_BLACK="\033[40m"
+CLR_BG_RED="\033[41m"
+CLR_BG_GREEN="\033[42m"
+CLR_BG_YELLOW="\033[43m"
+CLR_BG_BLUE="\033[44m"
+CLR_BG_PURPLE="\033[45m"
+CLR_BG_CYAN="\033[46m"
+CLR_BG_WHITE="\033[47m"

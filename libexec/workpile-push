@@ -8,6 +8,7 @@
 
 . "$_WORKPILE_ROOT/lib/workpile.ini"
 
+. "$_WORKPILE_ROOT/lib/generic.cst"
 . "$_WORKPILE_ROOT/lib/workpile.cst"
 . "$_WORKPILE_ROOT/lib/workpile.fun"
 
@@ -26,7 +27,7 @@ task="$( wp_add_task "$taskname" "$( wp_get_firsttask )" )"
 wp_set_firsttask "$task"
 
 # User infos
-echo "Pushing '$taskname'"
+echo -e "Pushing '${TAG_B}$taskname${TAG_E}'"
 
 # Exit
 wp_exit "$WP_RV_OK"
