@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Usage: workpile rewrite [-a|-i] <text>
+# Summary: Rewrite the current task
+# Help: This will rewrite the current task description.
+#
+# -a		add text at the end of the current description rather than replace it
+# -i		insert text at the start of the current description rather than replace it
+#
+# <text>	the text to use for addition/replacement
+
+# IMPORTS
+########################################
+
+. "$_WORKPILE_ROOT/lib/workpile.ini"
+
+. "$_WORKPILE_ROOT/lib/generic.cst"
+. "$_WORKPILE_ROOT/lib/workpile.cst"
+. "$_WORKPILE_ROOT/lib/workpile.fun"
+
+# SCRIPT
+########################################
+
+# Get the argument
+arg_position="$1"
+
+[ "$arg_position" = "-a" ] && shift
+[ "$arg_position" = "-i" ] && shift
+
+task="$( wp_get_firsttask )"
+taskname="$( wp_get_taskname "$task" )"
+
+case "$arg_position" in
+	"-a")
+		# Adding the text
+		text="$taskname $*"
+	;;
+	"-i")
+		# Inserting the text
+		text="$* $taskname"
+	;;
+	*)
+		# Replacing the text
+		text="$*"
+	;;
+esac
+
+wp_set_taskname "$task" "$text"
+
+# UI
+echo -e "Renaming '$taskname' as '${TAG_B}${text}${TAG_E}'."
+
+# Exit
+wp_exit "$WP_RV_OK"
